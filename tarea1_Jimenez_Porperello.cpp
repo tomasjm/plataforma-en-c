@@ -94,11 +94,11 @@ int main()
             }
             break;
         case 2: //Caso registro de usuario
-            cout << "Ingrese el usuario que desea registrar" << endl;
+            cout << "Ingrese su rut sin puntos ni guion para registarse: " << endl;
             cin >> usuario;
             do
             {
-                cout << "Ingrese la contrasena deseada de 4 digitos" << endl;
+                cout << "Ingrese la contrasena deseada de 4 digitos: " << endl;
                 cin >> contrasena;
                 // Comprobar que la contrasa sea de maximo 4 digitos o caracteres
                 if (contrasena.length() == 4)
@@ -124,7 +124,7 @@ int main()
             cout << "El programa se cerrará" << endl;
             return false;
         default: // Caso de que no seleccione una opcion valida, esto se repetirá en los otros casos "default"
-            cout << "Ingrese una opcion correcta por favor" << endl;
+            cout << "Ingrese una opcion correcta por favor: " << endl;
             break;
         }
 
@@ -263,7 +263,7 @@ int main()
                         break;
                     }
                     default:
-                        cout << "Comando invalido. Por favor ingrese una opcion valida" << endl;
+                        cout << "Comando invalido. Por favor ingrese una opcion valida: " << endl;
                     }
                 }
                 break;
@@ -274,7 +274,7 @@ int main()
                 int estado = 0;
                 while (estado != 1)
                 {
-                    cout << "Que tipo de movimiento se desea anadir?:" << endl;
+                    cout << "Que tipo de movimiento se desea anadir?" << endl;
                     cout << "1. minutos." << endl;
                     cout << "2. MB." << endl;
                     cin >> movimiento;
@@ -315,7 +315,7 @@ int main()
                     }
                     break;
                     default:
-                        cout << "Comando invalido. Por favor ingrese una opcion valida" << endl;
+                        cout << "Comando invalido. Por favor ingrese una opcion valida: " << endl;
                     }
                 }
             }
@@ -325,7 +325,7 @@ int main()
                 return false;
                 break;
             default:
-                cout << "Comando invalido, intente nuevamente" << endl;
+                cout << "Comando invalido, intente nuevamente: " << endl;
             }
         } while (loggedIn);
     }
