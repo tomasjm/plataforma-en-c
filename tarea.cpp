@@ -41,10 +41,10 @@ int main()
         switch (opcionPrimerMenu)
         {
         case 1:
+	    cout << "Ingrese su usuario: " << endl;
+	    cin >> usuario;
             for (int i = 3; i > 0; i--)
             {
-                cout << "Ingrese su usuario: " << endl;
-                cin >> usuario;
                 cout << "Ingrese su contrasena: " << endl;
                 cin >> contrasena;
                 if (usuario == usuarioRegistrado && contrasena == contrasenaRegistrada)
@@ -63,12 +63,8 @@ int main()
                 cout << "No has podido ingresar sesion" << endl;
                 return false;
             }
-            else
-            {
-                break;
-            }
+            break;
         case 2:
-            cout << "caso 2" << endl;
             cout << "Ingrese su usuario" << endl;
             cin >> usuario;
             cout << "Ingrese la contrasena" << endl;
@@ -80,13 +76,12 @@ int main()
                 usuarioRegistrado = usuario;
                 contrasenaRegistrada = contrasena;
                 cout << "Te has registrado correctamente!" << endl;
-                break;
             }
             else
             {
                 cout << "El registro ha fallado, intentalo nuevamente!" << endl;
-                break;
             }
+	    break;
         case 3:
             cout << "El programa se cerrará" << endl;
             return false;
@@ -96,13 +91,37 @@ int main()
         }
 
     } while (!loggedIn);
-    cout << "pase por aqui " << loggedIn << endl;
     if (loggedIn)
     {
-        cout << "HOLA MUNDO " << endl;
         do
         {
-
+		int opcionMenu;
+		cout << "1. Consultar/Contratar Plan" << endl
+			<< "2. Consulta de Saldo" << endl
+			<< "3. Recarga" << endl
+			<< "4. Añadir movimiento" << endl
+			<< "5. Salir" << endl;
+		cin >> opcionMenu;
+		switch(opcionMenu) {
+			case 1:
+				cout << "Opcion 1" << endl;
+				break;
+			case 2:
+				cout << "Opcion 2" << endl;
+				break;
+			case 3:
+				cout << "Opcion 3" << endl;
+				break;
+			case 4:
+				cout << "Opcion 4" << endl;
+				break;
+			case 5:
+				cout << "Opcion 5" << endl;
+				break;
+			default:
+				cout << "Comando invalido, intente nuevamente" << endl;
+				break;
+		}
         } while (loggedIn);
     }
     return 0;
