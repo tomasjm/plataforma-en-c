@@ -2,6 +2,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cstring>
 
 using namespace std;
 
@@ -44,12 +45,12 @@ int plancontratado = 0;
 // Arrays de movimientos
 
 /*  
-{ 'dia', 'mes', 'año', 'hora', 'min', 'seg', 'mb/min', 'cant' }
+{ 'dia', 'mes', 'año', 'hora', 'min', 'seg', 'cant', 'mb/minutos' }
 min = 1
 mb = 2
 */
 
-int datosMovimientos[10][8];
+char datosMovimientos[10][8][10];
 int conteoMovimientos = 0; // Conteo de movimientos registrados
 
 int main()
@@ -388,20 +389,34 @@ void principal_Movimiento()
         {
         case 1: // Caso movimiento minutos
         {
-            int ingMov[8];
-            ingMov[6] = 1;
-            do
-            {
-                limpiarPantalla();
-                cout << "Ingrese el movimiento con el formato: " << endl
-                     << "dd/mm/yyyy hh:mm:ss cantMinutos" << endl;
-                scanf("%d/%d/%d %d:%d:%d %d", &ingMov[0], &ingMov[1], &ingMov[2], &ingMov[3], &ingMov[4], &ingMov[5], &ingMov[7]);
+            char ingMov[8][100];
+            strcpy(ingMov[7], "minutos");
+            char fecha[25];
+            char hora[25];
+            char cant[25];
+            cout << "Ingrese el movimiento con el formato: " << endl
+                 << "dd/mm/yyyy hh:mm:ss cantMinutos" << endl;
+            scanf("%s %s %s", fecha, hora, cant);
 
-                /* VALIDACIONES DE FECHAS, HORAS, ETC. SE PERMITE CUALQUIER AÑO */
-                /* { 'dia', 'mes', 'año', 'hora', 'min', 'seg', 'mb/min', 'cant' } */
-                /* 01/01/xxxx - 30/12/xxxx || 00:00:00 - 23:59:59 */
-            } while (ingMov[0] > 30 || ingMov[0] < 1 || ingMov[1] > 12 || ingMov[1] < 1 || ingMov[3] > 23 || ingMov[3] < 0 || ingMov[4] > 59 || ingMov[4] < 0 || ingMov[5] > 59 || ingMov[5] < 0);
-            if ((minutos - ingMov[7]) < 0)
+            char *tokenFecha;
+            tokenFecha = strtok(fecha, "/");
+            strcpy(ingMov[0], tokenFecha);
+            tokenFecha = strtok(NULL, "/");
+            strcpy(ingMov[1], tokenFecha);
+            tokenFecha = strtok(NULL, "/");
+            strcpy(ingMov[2], tokenFecha);
+
+            char *tokenHora;
+            tokenHora = strtok(hora, ":");
+            strcpy(ingMov[3], tokenHora);
+            tokenHora = strtok(NULL, ":");
+            strcpy(ingMov[4], tokenHora);
+            tokenHora = strtok(NULL, ":");
+            strcpy(ingMov[5], tokenHora);
+
+            strcpy(ingMov[6], cant);
+
+            if ((minutos - atoi(cant)) < 0)
             {
                 limpiarPantalla();
                 cout << "Saldo insuficiente. No es posible realizar el movimiento." << endl;
@@ -411,10 +426,10 @@ void principal_Movimiento()
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    datosMovimientos[conteoMovimientos][i] = ingMov[i];
+                    strcpy(datosMovimientos[conteoMovimientos][i], ingMov[i]);
                 }
                 conteoMovimientos++;
-                minutos = minutos - ingMov[7];
+                minutos = minutos - atoi(cant);
                 limpiarPantalla();
                 estado = 1;
             }
@@ -422,20 +437,34 @@ void principal_Movimiento()
         }
         case 2: //Caso movimiento mb
         {
-            int ingMov[8];
-            ingMov[6] = 2;
-            do
-            {
-                limpiarPantalla();
-                cout << "Ingrese el movimiento con el formato: " << endl
-                     << "dd/mm/yyyy hh:mm:ss cantMb" << endl;
-                scanf("%d/%d/%d %d:%d:%d %d", &ingMov[0], &ingMov[1], &ingMov[2], &ingMov[3], &ingMov[4], &ingMov[5], &ingMov[7]);
+            char ingMov[8][100];
+            strcpy(ingMov[7], "mb");
+            char fecha[25];
+            char hora[25];
+            char cant[25];
+            cout << "Ingrese el movimiento con el formato: " << endl
+                 << "dd/mm/yyyy hh:mm:ss cantMb" << endl;
+            scanf("%s %s %s", fecha, hora, cant);
 
-                /* VALIDACIONES DE FECHAS, HORAS, ETC. SE PERMITE CUALQUIER AÑO */
-                /* { 'dia', 'mes', 'año', 'hora', 'min', 'seg', 'mb/min', 'cant' } */
-                /* 01/01/xxxx - 30/12/xxxx || 00:00:00 - 23:59:59 */
-            } while (ingMov[0] > 30 || ingMov[0] < 1 || ingMov[1] > 12 || ingMov[1] < 1 || ingMov[3] > 23 || ingMov[3] < 0 || ingMov[4] > 59 || ingMov[4] < 0 || ingMov[5] > 59 || ingMov[5] < 0);
-            if ((mb - ingMov[7]) < 0)
+            char *tokenFecha;
+            tokenFecha = strtok(fecha, "/");
+            strcpy(ingMov[0], tokenFecha);
+            tokenFecha = strtok(NULL, "/");
+            strcpy(ingMov[1], tokenFecha);
+            tokenFecha = strtok(NULL, "/");
+            strcpy(ingMov[2], tokenFecha);
+
+            char *tokenHora;
+            tokenHora = strtok(hora, ":");
+            strcpy(ingMov[3], tokenHora);
+            tokenHora = strtok(NULL, ":");
+            strcpy(ingMov[4], tokenHora);
+            tokenHora = strtok(NULL, ":");
+            strcpy(ingMov[5], tokenHora);
+
+            strcpy(ingMov[6], cant);
+
+            if ((mb - stoi(cant)) < 0)
             {
                 limpiarPantalla();
                 cout << "Saldo insuficiente. No es posible realizar el movimiento." << endl;
@@ -445,10 +474,10 @@ void principal_Movimiento()
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    datosMovimientos[conteoMovimientos][i] = ingMov[i];
+                    strcpy(datosMovimientos[conteoMovimientos][i], ingMov[i]);
                 }
                 conteoMovimientos++;
-                mb = mb - ingMov[7];
+                mb = mb - atoi(cant);
                 limpiarPantalla();
                 estado = 1;
             }
@@ -482,14 +511,7 @@ void principal_ConsultaMovimientos()
             {
                 for (int i = 0; i < conteoMovimientos; i++)
                 {
-                    if (datosMovimientos[i][6] == 1)
-                    {
-                        printf("%d/%d/%d %d:%d:%d %d minutos\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][7]);
-                    }
-                    else
-                    {
-                        printf("%d/%d/%d %d:%d:%d %d mb\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][7]);
-                    }
+                    printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
                 }
             }
             estado = 1;
