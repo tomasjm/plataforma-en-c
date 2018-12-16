@@ -9,7 +9,7 @@
 * Tomás Jiménez. (t.jimenez03@ufromail.cl)
 *
 *
-* Fecha: 17/12/2018
+* Fecha: 16/12/2018
 *
 * Plataforma de atención de telefonía.
 * Esta plataforma cuenta con un sistema de registro e ingreso, son sus respectivas validaciones para que no se haga abuso del sistema, como lo es un ataque a fuerza bruta
@@ -24,10 +24,19 @@
 #include <stdio.h>
 #include <cstring>
 
+/*
+Se declara el namespace por que estamos accediendo
+a una clase llamada std incluida dentro de iostream y string
+*/
 using namespace std;
 
 /*          PROTOTIPOS          */
 void imprimirBienvenida();
+
+// ESTA FUNCION CONTIENE 2 LINEAS DE CODIGO PARA LIMPIAR PANTALLA, HAY QUE ACTIVAR LA NECESARIA.
+// UNA LINEA ES PARA LINUX
+// OTRA LINEA ES PARA WINDOWS
+// DE OTRO CASO APARECERÁ UN ERROR EN CONSOLA
 void limpiarPantalla();
 
 /* SECCION INICIO */
@@ -103,19 +112,27 @@ void imprimirBienvenida()
     //Impresion de titulo del programa
     cout << endl
          << endl;
-    cout << "*****************************************" << endl;
-    cout << "*                                       *" << endl;
-    cout << "*   Plataforma de Atencion al Usuario   *" << endl;
-    cout << "*                                       *" << endl;
-    cout << "*****************************************" << endl;
+    cout << "*********************************************" << endl;
+    cout << "*********************************************" << endl;
+    cout << "***                                       ***" << endl;
+    cout << "*** |-----------------------------------| ***" << endl;
+    cout << "*** |              Telefonia            | ***" << endl;
+    cout << "*** | Plataforma de Atencion al Usuario | ***" << endl;
+    cout << "*** |                                   | ***" << endl;
+    cout << "*** |     Desarrollado por: Tomas J.    | ***" << endl;
+    cout << "*** |-----------------------------------| ***" << endl;
+    cout << "***                                       ***" << endl;
+    cout << "*********************************************" << endl;
+    cout << "*********************************************" << endl;
     cout << endl
          << endl;
 }
 
 void limpiarPantalla()
 {
-    system("cls");
-    // system("clear");
+    // EN CASO DE QUE NO FUNCIONE CON NINGUNA, COMENTAR LAS 2 LINEAS POR FAVOR
+    // system("cls"); // WINDOWS
+    system("clear"); // BASADO EN LINUX
 }
 
 int menuInicio()
@@ -397,8 +414,8 @@ void principal_Recarga()
 
 void principal_Movimiento()
 {
-    int movimiento;
-    int estado = 0;
+    int movimiento; // variable que guardara el tipo de movimiento
+    int estado = 0; // variable para ejecutar el while y salir del mismo
     while (estado != 1)
     {
         cout << "Que tipo de movimiento se desea anadir?" << endl;
@@ -410,8 +427,12 @@ void principal_Movimiento()
         {
         case 1: // Caso movimiento minutos
         {
+            // Arreglo que guardara todos los datos que se van a pedir
+            /* { 'dia', 'mes', 'año', 'hora', 'min', 'seg', 'cant', 'mb/minutos' } */
             char ingMov[8][100];
             strcpy(ingMov[7], "minutos");
+            // El scanf me daba error cuando quería leer el formato "dd/mm/yyyy hh:mm:ss cant" usando un %s en cada valor que necesitaba
+            // por lo tanto, cree 3 arreglos que me almacenaran "dd/mm/yyyy" - "hh:mm:ss" - "cant" por separado, y luego, hacer la separación
             char fecha[25];
             char hora[25];
             char cant[25];
@@ -427,9 +448,13 @@ void principal_Movimiento()
                 cout << "Ingrese el movimiento con el formato: " << endl
                      << "dd/mm/yyyy hh:mm:ss cantMinutos" << endl;
                 scanf("%s %s %s", fecha, hora, cant);
+                // Si se vuelve a ejecutar el while, es por que hubo un error con el formato
                 error = 1;
+                // strlen cuenta los caracteres que se encuentran en la cadena
             } while (strlen(fecha) != 10 || strlen(hora) != 8);
 
+            /* El uso de la función la expliqué en el archivo "strings.cpp" ya que fue una explicación bastante extensa y usé ese modulo para realizar esta sección del código */
+            /* De forma super resumida, strtok separa cadenas de strings en base a un delimitador, con esto pude separar las fechas (dias, meses, años) y los horarios (horas, minutos, segundos) */
             char *tokenFecha;
             tokenFecha = strtok(fecha, "/");
             strcpy(ingMov[0], tokenFecha);
@@ -448,6 +473,8 @@ void principal_Movimiento()
 
             strcpy(ingMov[6], cant);
 
+            // La función atoi convierte el valor explicito del string en un entero, no nos mostrará el código ascii, si no el valor como tal. EJ: tengo un string que es "100", si la paso por atoi: atoi("100") -> arrojará 100 como entero
+            // Comprobamos que el saldo sea suficiente para ejecutar el movimiento
             if ((minutos - atoi(cant)) < 0)
             {
                 limpiarPantalla();
@@ -456,18 +483,19 @@ void principal_Movimiento()
             }
             else
             {
+                // De lo contrario, guardaremos el movimiento en el arreglo global que almacenará en cada fila un movimiento con todos sus datos.
                 for (int i = 0; i < 8; i++)
                 {
                     strcpy(datosMovimientos[conteoMovimientos][i], ingMov[i]);
                 }
-                conteoMovimientos++;
-                minutos = minutos - atoi(cant);
+                conteoMovimientos++;            //Contador que nos indica cuantos movimientos se han realizado CORRECTAMENTE
+                minutos = minutos - atoi(cant); // Restamos la cantidad utilizada
                 limpiarPantalla();
-                estado = 1;
+                estado = 1; // Salimos del bucle
             }
             break;
         }
-        case 2: //Caso movimiento mb
+        case 2: //Caso movimiento mb. En este caso, se repite el mismo procedimiento que en el caso anterior
         {
             char ingMov[8][100];
             strcpy(ingMov[7], "mb");
@@ -544,13 +572,15 @@ void principal_ConsultaMovimientos()
         limpiarPantalla();
         switch (opcion)
         {
-        case 1:
+        case 1: // Caso mostrar todos los movimientos
+            // Si el contador de movimientos es 0, logicamente no se han realizado movimientos
             if (conteoMovimientos == 0)
             {
                 cout << "No se han realizado movimientos" << endl;
             }
             else
             {
+                // En caso contrario, si el contador es distntito de 0, se mostrarán TODOS los movimientos
                 for (int i = 0; i < conteoMovimientos; i++)
                 {
                     printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
@@ -558,7 +588,7 @@ void principal_ConsultaMovimientos()
             }
             estado = 1;
             break;
-        case 2:
+        case 2: // Caso movimientos por filtro de hora y fecha
             if (conteoMovimientos == 0)
             {
                 cout << "No se han realizado movimientos" << endl;
@@ -570,7 +600,7 @@ void principal_ConsultaMovimientos()
 
             estado = 1;
             break;
-        case 3:
+        case 3: // Caso volver al menu principal
             estado = 1;
             break;
         default:
@@ -581,18 +611,25 @@ void principal_ConsultaMovimientos()
 
 void filtroMovimientos()
 {
-
-    char desde[2][20];
-    char hasta[2][20];
-    char aux[10];
-    char desdeRango[6][20];
-    char hastaRango[6][20];
-    int sumDesdeFechas;
-    int sumDesdeHoras;
-    int sumHastaFechas;
-    int sumHastaHoras;
+    // Se repite el procedimiento de separación de strings
+    char desde[2][20];      // Guardará el rango inicial: [0]: "dd/mm/yyyy" [1]: "hh:mm:ss"
+    char hasta[2][20];      // Guardará el rango final: [0]: "dd/mm/yyyy" [1]: "hh:mm:ss"
+    char aux[10];           // Variable auxiliar para no tener errores con el buffer del scanf al leer strings
+    char desdeRango[6][20]; //En este arreglo guardaremos las variables SEPARADAS contenidas en el arreglo anterior llamado "desde" | dd, mm, yyyy, hh, mm, ss
+    char hastaRango[6][20]; //En este arreglo guardaremos las variables SEPARADAS contenidas en el arreglo anterior llamado "hasta" | dd, mm, yyyy, hh, mm, ss
+    /* En las siguientes variables usaré una forma de evaluar los rangos de fechas con la siguiente formula: 
+        año*10000 + mes*100 + dia para las fechas
+        hora*10000 + minutos*100 + segundos para las horas
+        De esta forma, obtendremos un entero de la siguiente forma:
+        yyyymmdd y hhmmss respectivamente
+        EJEMPLO: 05/08/2018 -> 20180805  || 12:30:52 ->  123052
+        De esta forma, podremos hacer comparaciones de fechas de una forma super sencilla, esta forma de calcular se utiliza en PHP para calculos simples
+    */
+    int sumDesdeFechas; // Este guardara la formula de fechas para el rango INICIAL
+    int sumDesdeHoras;  // Este guardara la formula de horas para el rango INICIAL
+    int sumHastaFechas; // Este guardara la formula de fechas para el rango FINAL
+    int sumHastaHoras;  // Este guardara la formula de horas para el rango FINAL
     int error = 0;
-    //printf("\n\n%s %s %s %s \n\n", desde[0], desde[1], hasta[0], hasta[1]);
 
     do
     {
@@ -603,10 +640,13 @@ void filtroMovimientos()
         }
         cout << "Ingrese el rango a filtrar con el siguiente formato: " << endl
              << "dd/mm/yyyy hh:mm:ss - dd/mm/yyyy hh:mm:ss" << endl;
-        scanf("%s %s %s %s %s", desde[0], desde[1], aux, hasta[0], hasta[1]);
+        scanf("%s %s %s %s %s", desde[0], desde[1], aux, hasta[0], hasta[1]); // -> nos retorna: "dd/mm/yyyy" "hh:mm:ss" "-" "dd/mm/yyyy" "hh:mm:ss"
         error = 1;
-    } while (strlen(desde[0]) != 10 || strlen(desde[1]) != 8 || strlen(hasta[0]) != 10 || strlen(hasta[1]) != 8);
+    } while (strlen(desde[0]) != 10 || strlen(desde[1]) != 8 || strlen(hasta[0]) != 10 || strlen(hasta[1]) != 8); //Pequeñas validaciones para prevenir errores en el formato
 
+    // Misma explicación que está en "strings.cpp", pues, tenemos que separar los strings ingresados
+
+    //NOS DEVUELVE dd, mm, yyyy
     char *tokenDesdeFecha;
     tokenDesdeFecha = strtok(desde[0], "/");
     strcpy(desdeRango[0], tokenDesdeFecha);
@@ -615,6 +655,7 @@ void filtroMovimientos()
     tokenDesdeFecha = strtok(NULL, "/");
     strcpy(desdeRango[2], tokenDesdeFecha);
 
+    // NOS DEVUELVE hh, mm, ss
     char *tokenDesdeHora;
     tokenDesdeHora = strtok(desde[1], ":");
     strcpy(desdeRango[3], tokenDesdeHora);
@@ -623,6 +664,7 @@ void filtroMovimientos()
     tokenDesdeHora = strtok(NULL, ":");
     strcpy(desdeRango[5], tokenDesdeHora);
 
+    //NOS DEVUELVE dd, mm, yyyy
     char *tokenHastaFecha;
     tokenHastaFecha = strtok(hasta[0], "/");
     strcpy(hastaRango[0], tokenHastaFecha);
@@ -631,6 +673,7 @@ void filtroMovimientos()
     tokenHastaFecha = strtok(NULL, "/");
     strcpy(hastaRango[2], tokenHastaFecha);
 
+    // NOS DEVUELVE hh, mm, ss
     char *tokenHastaHora;
     tokenHastaHora = strtok(hasta[1], ":");
     strcpy(hastaRango[3], tokenHastaHora);
@@ -639,56 +682,58 @@ void filtroMovimientos()
     tokenHastaHora = strtok(NULL, ":");
     strcpy(hastaRango[5], tokenHastaHora);
 
-    //printf("\n\nDESDE: %s/%s/%s %s:%s:%s \n\n", desdeRango[0], desdeRango[1], desdeRango[2], desdeRango[3], desdeRango[4], desdeRango[5]);
-    //printf("\n\nHASTA: %s/%s/%s %s:%s:%s \n\n", hastaRango[0], hastaRango[1], hastaRango[2], hastaRango[3], hastaRango[4], hastaRango[5]);
+    // Aqui aplicamos las formulas ya explicadas
+    sumHastaFechas = atoi(hastaRango[0]) + atoi(hastaRango[1]) * 100 + atoi(hastaRango[2]) * 10000; // -> queda como un entero de la forma yyyymmdd
+    sumHastaHoras = atoi(hastaRango[3]) * 10000 + atoi(hastaRango[4]) * 100 + atoi(hastaRango[5]);  // -> queda como un entero de la forma hhmmss
+    sumDesdeFechas = atoi(desdeRango[0]) + atoi(desdeRango[1]) * 100 + atoi(desdeRango[2]) * 10000; // -> queda como un entero de la forma yyyymmdd
+    sumDesdeHoras = atoi(desdeRango[3]) * 10000 + atoi(desdeRango[4]) * 100 + atoi(desdeRango[5]);  // -> queda como un entero de la forma hhmmss
 
-    sumHastaFechas = atoi(hastaRango[0]) + atoi(hastaRango[1]) * 100 + atoi(hastaRango[2]) * 10000;
-    sumHastaHoras = atoi(hastaRango[3]) * 10000 + atoi(hastaRango[4]) * 100 + atoi(hastaRango[5]);
-    sumDesdeFechas = atoi(desdeRango[0]) + atoi(desdeRango[1]) * 100 + atoi(desdeRango[2]) * 10000;
-    sumDesdeHoras = atoi(desdeRango[3]) * 10000 + atoi(desdeRango[4]) * 100 + atoi(desdeRango[5]);
-
-    //printf("\n\nFECHAS: DESDE: %d  | INTERMEDIO: %d  | HASTA: %d \n\n", sumDesdeFechas, sumFechas, sumHastaFechas);
-    //printf("\n\nHORAS: DESDE: %d  | INTERMEDIO: %d  | HASTA: %d \n\n", sumDesdeHoras, sumHoras, sumHastaHoras);
     limpiarPantalla();
     int contador = 0;
+    // Aca comenzaremos a evaluar todos los movimientos que han sido INGRESADOS
     for (int i = 0; i < conteoMovimientos; i++)
     {
+        // Realizaremos las sumas con las mismas formulas explicadas anteriormente
         int sumFechas;
         int sumHoras;
-        sumFechas = atoi(datosMovimientos[i][0]) + atoi(datosMovimientos[i][1]) * 100 + atoi(datosMovimientos[i][2]) * 10000;
-        sumHoras = atoi(datosMovimientos[i][3]) * 10000 + atoi(datosMovimientos[i][4]) * 100 + atoi(datosMovimientos[i][5]);
+        sumFechas = atoi(datosMovimientos[i][0]) + atoi(datosMovimientos[i][1]) * 100 + atoi(datosMovimientos[i][2]) * 10000; // -> queda como un entero de la forma yyyymmdd
+        sumHoras = atoi(datosMovimientos[i][3]) * 10000 + atoi(datosMovimientos[i][4]) * 100 + atoi(datosMovimientos[i][5]);  // -> queda como un entero de la forma hhmmss
+
+        // Si las fechas coinciden para el rango inicial y final, significa que podría haber un desfase solo por horas
         if (sumDesdeFechas == sumFechas && sumHastaFechas == sumFechas)
         {
+            // Comprobamos que el desfase de horas cumple que haya un movimiento dentro del rango inicial y final
             if (sumDesdeHoras < sumHoras && sumHastaHoras > sumHoras)
             {
+                // Si se cumple, imprimira el movimiento por pantalla y aumentara el contador
                 contador++;
                 printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
             }
-            // else
-            // {
-            //     printf("\n\nNO ENTRA\n\n");
-            // }
         }
+        /*
+            Aca comprobaremos si la fecha de rango INICIAL es IGUAL a la fecha del MOVIMIENTO
+            Si estas son iguales, tenemos que comprobar que el horario inicial sea menor o igual al horario del movimiento ingresado, de lo contrario, quedaría fuera.
+            Si estas 2 se cumplen, tendremos que comprobar A LA VEZ si es que la fecha del rango FINAL es MAYOR, si esto se cumple, imprimiremos el movimiento facilmente o si las fechas son iguales y la hora del rango final es mayor a la del movimiento.
+        */
         else if (sumDesdeFechas == sumFechas && sumHoras >= sumDesdeHoras && (sumHastaFechas > sumFechas || (sumHastaFechas == sumFechas && sumHoras < sumHastaHoras)))
         {
             contador++;
             printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
         }
+        // Aca hacemos lo mismo del caso anterior, solo que asumimos que la fecha del rango FINAL es igual a la INICIAL, entonces tendremos que comprobar que la hora del rango final es mayor a la del movimiento y además que esté dentro del rango inicial
         else if (sumHastaFechas == sumFechas && sumHoras <= sumHastaHoras && (sumDesdeFechas < sumFechas || (sumDesdeFechas == sumFechas && sumHoras > sumDesdeHoras)))
         {
             contador++;
             printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
         }
+        // El caso más sencillo, si el rango de fechas inicial es menor a la fecha del movimiento y si el rango de fechas final es mayor a la del movimiento, significa que SI o SI el movimiento esta dentro del rango
         else if (sumDesdeFechas < sumFechas && sumHastaFechas > sumFechas)
         {
             contador++;
             printf("%s/%s/%s %s:%s:%s %s %s\n", datosMovimientos[i][0], datosMovimientos[i][1], datosMovimientos[i][2], datosMovimientos[i][3], datosMovimientos[i][4], datosMovimientos[i][5], datosMovimientos[i][6], datosMovimientos[i][7]);
         }
-        // else
-        // {
-        //     printf("\n\nNO ENTRA\n\n");
-        // }
     }
+    // Si no se encontró ningún movimiento, lo imprimirá por pantalla
     if (contador == 0)
     {
         printf("No se han encontrado movimientos en el rango de fechas dado\n");
